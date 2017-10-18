@@ -1,21 +1,18 @@
 ﻿/********************************************************************
-* Copyright (C) 2015 Antoine Aflalo
-* 
+* Copyright (C) 2015-2017 Antoine Aflalo
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
 * as published by the Free Software Foundation; either version 2
 * of the License, or (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 ********************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using AudioEndPoint;
 using AudioEndPointControllerWrapper;
@@ -70,24 +67,27 @@ namespace SoundSwitch.Model
 
 
         /// <summary>
-        ///     Get the playback device in the set state
+        /// Get the playback device in the set state
         /// </summary>
         /// <returns></returns>
         public ICollection<IAudioDevice> GetPlaybackDevices()
         {
-            _cacheLock.EnterUpgradeableReadLock();
-            try
+            using (AppLogger.Log.DebugCall())
             {
-                if (_needUpdate)
+                _cacheLock.EnterUpgradeableReadLock();
+                try
                 {
+                    if (!_needUpdate) return _playback;
+
+                    AppLogger.Log.Debug("Needs update");
                     Refresh();
+                    return _playback;
                 }
-                return _playback;
-            }
-            finally
-            {
-                AppLogger.Log.Debug("Get Playback Devices");
-                _cacheLock.ExitUpgradeableReadLock();
+                finally
+                {
+                    AppLogger.Log.Debug("Get Playback Devices");
+                    _cacheLock.ExitUpgradeableReadLock();
+                }
             }
 
 
@@ -102,6 +102,7 @@ namespace SoundSwitch.Model
 
                 try
                 {
+                    AppLogger.Log.Debug("Refreshing playback devices");
                     _playback.UnionWith(AudioController.GetPlaybackDevices(_state));
                 }
                 catch (DefSoundException e)
@@ -113,6 +114,7 @@ namespace SoundSwitch.Model
                 _recording.Clear();
                 try
                 {
+                    AppLogger.Log.Debug("Refreshing recording devices");
                     _recording.UnionWith(AudioController.GetRecordingDevices(_state));
                 }
                 catch (DefSoundException e)
@@ -128,24 +130,27 @@ namespace SoundSwitch.Model
         }
 
         /// <summary>
-        ///     Get the recording device in the set state
+        /// Get the recording device in the set state
         /// </summary>
         /// <returns></returns>
         public ICollection<IAudioDevice> GetRecordingDevices()
         {
-            _cacheLock.EnterUpgradeableReadLock();
-            try
+            using (AppLogger.Log.DebugCall())
             {
-                if (_needUpdate)
+                _cacheLock.EnterUpgradeableReadLock();
+                try
                 {
+                    if (!_needUpdate) return _recording;
+
+                    AppLogger.Log.Debug("Needs update");
                     Refresh();
+                    return _recording;
                 }
-                return _recording;
-            }
-            finally
-            {
-                AppLogger.Log.Debug("Get Recording Devices");
-                _cacheLock.ExitUpgradeableReadLock();
+                finally
+                {
+                    AppLogger.Log.Debug("Get Recording Devices");
+                    _cacheLock.ExitUpgradeableReadLock();
+                }
             }
         }
     }

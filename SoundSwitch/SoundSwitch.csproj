@@ -203,25 +203,19 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonMark.NET.0.14.0\lib\net45\CommonMark.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Toolkit.Uwp.Notifications, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Toolkit.Uwp.Notifications.1.0.0\lib\dotnet\Microsoft.Toolkit.Uwp.Notifications.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Toolkit.Uwp.Notifications, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Toolkit.Uwp.Notifications.1.4.1\lib\dotnet\Microsoft.Toolkit.Uwp.Notifications.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -245,6 +239,8 @@
     <Compile Include="Framework\Audio\CachedSoundFileNotExistsException.cs" />
     <Compile Include="Framework\Audio\CachedSoundWaveStream.cs" />
     <Compile Include="Framework\AutoStart.cs" />
+    <Compile Include="Framework\Banner\BannerData.cs" />
+    <Compile Include="Framework\Banner\BannerManager.cs" />
     <Compile Include="Framework\Configuration\IPCConfiguration.cs" />
     <Compile Include="Framework\Configuration\AppConfigs.cs" />
     <Compile Include="Framework\Configuration\ConfigurationManager.cs" />
@@ -271,16 +267,24 @@
     <Compile Include="Framework\Minidump\MemoryDumper.cs" />
     <Compile Include="Framework\NotificationManager\NotificationFactory.cs" />
     <Compile Include="Framework\NotificationManager\NotificationManager.cs" />
+    <Compile Include="Framework\NotificationManager\NotificationCustomSoundEnum.cs" />
     <Compile Include="Framework\NotificationManager\Notification\Configuration\INotificationConfiguration.cs" />
     <Compile Include="Framework\NotificationManager\Notification\Configuration\NotificationConfiguration.cs" />
     <Compile Include="Framework\NotificationManager\Notification\INotification.cs" />
     <Compile Include="Framework\NotificationManager\Notification\NotificationCustom.cs" />
     <Compile Include="Framework\NotificationManager\Notification\NotificationSound.cs" />
+    <Compile Include="Framework\NotificationManager\Notification\NotificationBanner.cs" />
     <Compile Include="Framework\NotificationManager\Notification\NotificationToast.cs" />
     <Compile Include="Framework\NotificationManager\Notification\NotificationWindows.cs" />
     <Compile Include="Framework\NotificationManager\Notification\NotificationNone.cs" />
     <Compile Include="Framework\NotificationManager\NotificationTypeEnum.cs" />
     <Compile Include="Framework\Toast\ToastData.cs" />
+    <Compile Include="Framework\Banner\BannerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Framework\Banner\BannerForm.Designer.cs">
+      <DependentUpon>BannerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Framework\Toast\ToastManager.cs" />
     <Compile Include="Framework\TooltipInfoManager\TooltipInfoFactory.cs" />
     <Compile Include="Framework\TooltipInfoManager\TooltipInfoManager.cs" />
@@ -294,59 +298,42 @@
     <Compile Include="Framework\Updater\GitHubRelease.cs" />
     <Compile Include="Framework\Updater\IntervalUpdateChecker.cs" />
     <Compile Include="Framework\Updater\Release.cs" />
+    <Compile Include="Framework\Updater\SignatureChecker.cs" />
     <Compile Include="Framework\Updater\UpdateChecker.cs" />
+    <Compile Include="Framework\Updater\UpdateMode.cs" />
     <Compile Include="Framework\Updater\UpdateState.cs" />
     <Compile Include="Framework\Updater\WebFile.cs" />
     <Compile Include="Framework\WindowsAPIAdapter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Model\IAudioDeviceLister.cs" />
-    <Compile Include="Properties\AboutStrings.Designer.cs">
+    <Compile Include="Localization\AboutStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AboutStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AudioCycler.Designer.cs">
+    <Compile Include="Localization\Language.cs" />
+    <Compile Include="Localization\LanguageParser.cs" />
+    <Compile Include="Localization\SettingsStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>AudioCycler.resx</DependentUpon>
+      <DependentUpon>SettingsStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Notifications.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Notifications.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\SettingsString.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SettingsString.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\TooltipInfo.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TooltipInfo.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\TrayIconStrings.Designer.cs">
+    <Compile Include="Localization\TrayIconStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TrayIconStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\UpdateFormStrings.Designer.cs">
+    <Compile Include="Localization\UpdateDownloadStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>UpdateFormStrings.resx</DependentUpon>
+      <DependentUpon>UpdateDownloadStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Model\IAudioDeviceLister.cs" />
     <Compile Include="Util\AssemblyUtils.cs" />
     <Compile Include="Util\AudioDeviceIconExtractor.cs" />
     <Compile Include="Model\AudioDeviceLister.cs" />
     <Compile Include="Model\Events.cs" />
     <Compile Include="Model\IAppModel.cs" />
-    <Compile Include="UI\Controls\ChangelogViewer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\TextProgressBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\Forms\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -373,24 +360,23 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\TrayIcon.cs" />
-    <EmbeddedResource Include="Properties\AboutStrings.fr.resx" />
-    <EmbeddedResource Include="Properties\AboutStrings.resx">
+    <EmbeddedResource Include="Framework\Banner\BannerForm.resx">
+      <DependentUpon>BannerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\AboutStrings.de.resx" />
+    <EmbeddedResource Include="Localization\AboutStrings.fr.resx" />
+    <EmbeddedResource Include="Localization\AboutStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AboutStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\AudioCycler.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\AudioCycler.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+    <EmbeddedResource Include="Localization\SettingsStrings.de.resx">
       <SubType>Designer</SubType>
-      <LastGenOutput>AudioCycler.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Notifications.fr.resx" />
-    <EmbeddedResource Include="Properties\Notifications.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Notifications.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Localization\TrayIconStrings.de.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Localization\UpdateDownloadStrings.de.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -401,33 +387,38 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Properties\SettingsString.fr.resx" />
-    <EmbeddedResource Include="Properties\SettingsString.resx">
+    <EmbeddedResource Include="Localization\SettingsStrings.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\SettingsStrings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SettingsString.Designer.cs</LastGenOutput>
+      <LastGenOutput>SettingsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\TooltipInfo.fr.resx" />
-    <EmbeddedResource Include="Properties\TooltipInfo.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TooltipInfo.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Localization\TrayIconStrings.fr.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\TrayIconStrings.fr.resx" />
-    <EmbeddedResource Include="Properties\TrayIconStrings.resx">
+    <EmbeddedResource Include="Localization\TrayIconStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TrayIconStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\UpdateFormStrings.fr.resx" />
-    <EmbeddedResource Include="Properties\UpdateFormStrings.resx">
+    <EmbeddedResource Include="Localization\UpdateDownloadStrings.fr.resx" />
+    <EmbeddedResource Include="Localization\UpdateDownloadStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>UpdateFormStrings.Designer.cs</LastGenOutput>
+      <LastGenOutput>UpdateDownloadStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\UpdateDownloadForm.resx">
+      <DependentUpon>UpdateDownloadForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -462,6 +453,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\donate-16.png" />
     <None Include="Resources\donate.ico" />
     <None Include="Resources\InfoHelp.png" />
@@ -498,6 +490,10 @@
     <ProjectReference Include="..\AudioEndPointLibrary\Audio.EndPoint.Controller.Wrapper\Audio.EndPoint.Controller.Wrapper.vcxproj">
       <Project>{115bf2b4-b3be-446d-ba76-348e274258f7}</Project>
       <Name>Audio.EndPoint.Controller.Wrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundSwitch.UI.UserControls\SoundSwitch.UI.UserControls.csproj">
+      <Project>{082ab6e3-eb26-4791-8025-5ba9682460ea}</Project>
+      <Name>SoundSwitch.UI.UserControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

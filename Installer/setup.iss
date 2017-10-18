@@ -8,7 +8,7 @@
 
 #define use_dotnetfx46
 
-#define use_vc2015
+#define use_vc2017
 
 #define MyAppSetupName 'SoundSwitch'
 #define ExeDir  '..\Final\'
@@ -18,7 +18,7 @@
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
-AppCopyright=Copyright � 2010-2016 {#MyAppSetupName}
+AppCopyright=Copyright © 2010-2017 {#MyAppSetupName}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany=SoundSwitch
 AppPublisher=Antoine Aflalo
@@ -38,6 +38,7 @@ CloseApplications=yes
 SignTool=SoundSwitch
 SignedUninstaller=yes
 LicenseFile={#ExeDir}\LICENSE.txt
+SetupLogging=yes
 ;AppMutex={#MyAppSetupName}
 
 ;MinVersion default value: "0,5.0 (Windows 2000+) if Unicode Inno Setup, else 4.0,4.0 (Windows 95+)"
@@ -49,6 +50,8 @@ ArchitecturesInstallIn64BitMode=x64
 ;Downloading and installing dependencies will only work if the memo/ready page is enabled (default behaviour)
 DisableReadyPage=no
 DisableReadyMemo=no
+Uninstallable=not IsTaskSelected('portablemode')
+CreateUninstallRegKey=not IsTaskSelected('portablemode')
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
@@ -57,21 +60,30 @@ Name: "fr";    MessagesFile: "compiler:Languages\French.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "certs"; Description: "{cm:AddCertDescription}"; GroupDescription: "Certificates:"
+Name: "portablemode"; Description: "{cm:PortableMode}";  GroupDescription: "{cm:GroupPortableMode}"; Flags: unchecked
 
 [Files]
-Source: "{#ExeDir}x64\SoundSwitch.exe.config"; DestDir: "{app}"; Check: IsX64
-Source: "{#ExeDir}x64\SoundSwitch.exe"; DestDir: "{app}"; Check: IsX64
-Source: "{#ExeDir}x64\*.dll"; DestDir: "{app}"; Check: IsX64
-Source: "{#ExeDir}x64\fr\*.dll"; DestDir: "{app}\fr"; Check: IsX64
+Source: "{#ExeDir}x64\SoundSwitch.exe.config"; DestDir: "{app}"; Check: Is64BitInstallMode  ; Flags: 64bit
+Source: "{#ExeDir}x64\SoundSwitch.exe"; DestDir: "{app}"; Check: Is64BitInstallMode   ; Flags: 64bit signonce
+Source: "{#ExeDir}x64\*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode   ; Flags: 64bit
+Source: "{#ExeDir}x64\*.pdb"; DestDir: "{app}"; Check: Is64BitInstallMode   ; Flags: 64bit
+Source: "{#ExeDir}x64\fr\*.dll"; DestDir: "{app}\fr"; Check: Is64BitInstallMode   ; Flags: 64bit   
+Source: "{#ExeDir}x64\de\*.dll"; DestDir: "{app}\de"; Check: Is64BitInstallMode   ; Flags: 64bit
 
-Source: "{#ExeDir}x86\SoundSwitch.exe.config"; DestDir: "{app}"; Check: not Is64BitInstallMode
-Source: "{#ExeDir}x86\SoundSwitch.exe"; DestDir: "{app}"; Check:  not Is64BitInstallMode
-Source: "{#ExeDir}x86\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode
-Source: "{#ExeDir}x86\fr\*.dll"; DestDir: "{app}\fr"; Check: not Is64BitInstallMode
+Source: "{#ExeDir}x86\SoundSwitch.exe.config"; DestDir: "{app}"; Check: not Is64BitInstallMode  ; Flags: 32bit
+Source: "{#ExeDir}x86\SoundSwitch.exe"; DestDir: "{app}"; Check:  not Is64BitInstallMode   ; Flags: 32bit signonce
+Source: "{#ExeDir}x86\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode    ; Flags: 32bit 
+Source: "{#ExeDir}x86\*.pdb"; DestDir: "{app}"; Check: not Is64BitInstallMode    ; Flags: 32bit 
+Source: "{#ExeDir}x86\fr\*.dll"; DestDir: "{app}\fr"; Check: not Is64BitInstallMode  ; Flags: 32bit 
+Source: "{#ExeDir}x86\de\*.dll"; DestDir: "{app}\de"; Check: not Is64BitInstallMode  ; Flags: 32bit 
 
 Source: "{#ExeDir}Changelog.html"; DestDir: "{app}"
 Source: "{#ExeDir}Readme.html"; DestDir: "{app}"   
 Source: "{#ExeDir}soundSwitched.png"; DestDir: "{app}\img"
+
+Source: "{#ExeDir}../../Certs/aaflalo.cer"; DestDir: "{app}\certs";
+Source: "{#ExeDir}../../Certs/SoundSwitch.cer"; DestDir: "{app}\certs";
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run\{#MyAppSetupName}"; Flags: uninsdeletekey
@@ -84,11 +96,23 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\SoundSwitch.exe"; Ta
 [Run]
 Filename: "{app}\SoundSwitch.exe"; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: nowait postinstall
 Filename: "{app}\Readme.html"; Description: "View the README file"; Flags: postinstall shellexec skipifsilent
+Filename: "https://www.aaflalo.me/donate/"; Description: "Support the project"; Flags: postinstall shellexec skipifsilent runasoriginaluser
 Filename: "{app}\Changelog.html"; Description: "View the CHANGELOG file"; Flags: postinstall shellexec skipifsilent unchecked
+Filename: "certutil.exe"; Parameters: "-addstore ""Root"" ""{app}\certs\aaflalo.cer"""; Flags: runhidden runascurrentuser skipifsilent;  Tasks: "certs"
+Filename: "certutil.exe"; Parameters: "-addstore ""TrustedPublisher"" ""{app}\certs\SoundSwitch.cer"""; Flags: runhidden runascurrentuser skipifsilent;  Tasks: "certs"
 
 [CustomMessages]
 win_sp_title=Windows %1 Service Pack %2
+en.AddCertDescription=Trust SoundSwitch Certficates%nThis way you won't have warnings when SoundSwitch is updating.
+fr.AddCertDescription=Installer les certificats de SoundSwitch%nSi sélectionné, Windows reconnaîtra SoundSwitch comme étant un distributeur valide.
+en.GroupPortableMode=Portable Mode
+fr.GroupPortableMode=Mode portable
+en.PortableMode=If selected, doesn't install for all the user.
+fr.PortableMode=Si sélectionné, SoundSwitch ne sera pas install� pour tous les utilisateurs.
 
+[UninstallRun]
+Filename: "certutil.exe"; Parameters: "-delstore ""Root"" ""eb db 8a 0a 72 a6 02 91 40 74 9e a2 af 63 d2 fc""" ; Flags: runhidden runascurrentuser
+Filename: "certutil.exe"; Parameters: "-delstore ""TrustedPublisher"" ""942A37BCA9A9889442F6710533CB5548""" ; Flags: runhidden runascurrentuser
 
 [Code]
 #include "scripts\checkMutex.iss"
@@ -200,6 +224,9 @@ end;
 #endif
 #ifdef use_vc2015
 #include "scripts\products\vcredist2015.iss"
+#endif
+#ifdef use_vc2017
+#include "scripts\products\vcredist2017.iss"
 #endif
 
 #ifdef use_mdac28
@@ -333,6 +360,9 @@ begin
 #ifdef use_vc2015
 	vcredist2015();
 #endif
+#ifdef use_vc2017
+	vcredist2017();
+#endif
 
 #ifdef use_mdac28
 	mdac28('2.7'); // min allowed version is 2.7
@@ -358,3 +388,16 @@ procedure InitializeWizard();
 begin
   idpDownloadAfter(wpReady); 
 end;
+
+// Called just before Setup terminates. Note that this function is called even if the user exits Setup before anything is installed.
+procedure DeinitializeSetup();
+var
+  logfilepathname, logfilename, newfilepathname: string;
+begin
+  logfilepathname := ExpandConstant('{log}');
+  logfilename := ExtractFileName(logfilepathname);
+  // Set the new target path as the directory where the installer is being run from
+  newfilepathname := ExpandConstant('{src}\') + logfilename;
+
+  FileCopy(logfilepathname, newfilepathname, false);
+end; 

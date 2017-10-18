@@ -31,16 +31,18 @@
 # Debug files
 *.dSYM/
 
-#VS
+# Visual Studio
+.vs/
 bin/
 obj/
 Debug/
 Release/
 ipch/
+*.user
+*.suo
 *.opensdf
 *.sdf
 Final
-GenerateChangelog.bat
 
 # nuget
 packages/
@@ -54,3 +56,4 @@ packages/
 /SoundSwitch.VC.VC.opendb
 /SoundSwitch.VC.db
 /SoundSwitch.psess
+

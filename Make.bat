@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 SET FILE_DIR=%~dp0
 SET BIN_DIR=%FILE_DIR%bin
-SET LANGS=(fr)
+SET LANGS=(fr de)
 
 set finalDir=%FILE_DIR%Final
 set x86Release=%finalDir%\x86
@@ -31,7 +31,28 @@ IF "%~1" neq "" (
 )
 
 
-set msbuildexe="%programfiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe"
+set VS2017Ent=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe
+set VS2017Pro=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe
+set VS2017Community=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe
+set VS2015=%ProgramFiles(x86)%\MSBuild\14.0\bin\msbuild.exe
+
+if exist "%VS2017Ent%" (
+  echo Using VS2017Ent
+  set msbuildexe="%VS2017Ent%"
+) else (
+    if exist "%VS2017Community%" (
+      echo Using VS2017Community
+      set msbuildexe="%VS2017Community%"
+    ) else (
+        if exist "%VS2017Pro%" (
+          echo Using VS2017Pro
+          set msbuildexe="%VS2017Pro%"
+        ) else (
+            echo Fallback to VS2015
+            set msbuildexe="%VS2015%"
+        )
+    )
+)
 
 Echo Making SoundSwitch %buildPlatform%
 Echo.
@@ -76,20 +97,20 @@ for %%l in %LANGS% DO (
     xcopy /y %BIN_DIR%\x86\Release\%%l\SoundSwitch.resources.dll %x86Release%\%%l\ 1>nul 2>nul
 )
 
-IF EXIST "%FILE_DIR%..\signinfo.txt" (
-    echo Signing release...
-    Echo.
-    call Sign.bat %x86Release%\SoundSwitch.exe
-    call Sign.bat %x64Release%\SoundSwitch.exe
-    call Sign.bat %x86Release%\AudioEndPointLibrary.dll
-    call Sign.bat %x64Release%\AudioEndPointLibrary.dll
-    call Sign.bat %x86Release%\Audio.EndPoint.Controller.Wrapper.dll
-    call Sign.bat %x64Release%\Audio.EndPoint.Controller.Wrapper.dll
-    for %%l in %LANGS% DO (
-        call Sign.bat %x86Release%\%%l\SoundSwitch.resources.dll
-        call Sign.bat %x64Release%\%%l\SoundSwitch.resources.dll
-    )
-)
+rem IF EXIST "%FILE_DIR%..\signinfo.txt" (
+rem     echo Signing release...
+rem     Echo.
+rem     call Sign.bat %x86Release%\SoundSwitch.exe
+rem     call Sign.bat %x64Release%\SoundSwitch.exe
+rem      call Sign.bat %x86Release%\AudioEndPointLibrary.dll
+rem      call Sign.bat %x64Release%\AudioEndPointLibrary.dll
+rem      call Sign.bat %x86Release%\Audio.EndPoint.Controller.Wrapper.dll
+rem      call Sign.bat %x64Release%\Audio.EndPoint.Controller.Wrapper.dll
+rem      for %%l in %LANGS% DO (
+rem          call Sign.bat %x86Release%\%%l\SoundSwitch.resources.dll
+rem          call Sign.bat %x64Release%\%%l\SoundSwitch.resources.dll
+rem      )
+rem )
 
 
 call ./Installer/Make-Installer.bat %buildPlatform%

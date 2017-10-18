@@ -1,11 +1,11 @@
 ﻿/********************************************************************
-* Copyright (C) 2016 Antoine Aflalo
-* 
+* Copyright (C) 2015-2017 Antoine Aflalo
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
 * as published by the Free Software Foundation; either version 2
 * of the License, or (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,7 +36,7 @@ namespace SoundSwitch.Framework.Updater
         public AutoUpdater(string installerParameters, string filePath)
         {
             InstallerParameters = installerParameters;
-            InstallerFilePath = Path.Combine(filePath, "Installer.exe");
+            InstallerFilePath = Path.Combine(filePath, "SoundSwitch_Update.exe");
         }
 
         public void Update(Release release, bool closeApp)
@@ -47,6 +47,11 @@ namespace SoundSwitch.Framework.Updater
                 file.Downloaded += (sender, args) =>
                 {
                     AppLogger.Log.Info("Update downloaded: " + file);
+                    if (!SignatureChecker.IsValid(file.FilePath))
+                    {
+                        AppLogger.Log.Error("The file has the wrong signature. Update cancelled.");
+                        return;
+                    }
                     file.Start(InstallerParameters);
                     if (closeApp)
                     {
